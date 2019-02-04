@@ -1,10 +1,10 @@
 const express = require('express')
-const { route } = require('../route')
-const { Middleware } = require('./middleware')
+const { route } = require('./routes/route')
+const { Middleware } = require('./core/middleware')
 const fs        = require('fs')
 var bodyParser = require('body-parser');
 const  fileUpload  = require('express-fileupload')
-const { socket } = require('../socket')
+const { socket } = require('./socket')
 // const simpleWebRTC = require('simplewebrtc')
 // const WebSocket = require('ws')
 const http = require('http')
