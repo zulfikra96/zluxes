@@ -29,6 +29,16 @@ class Database {
     * pada table
     * 
     */
+
+    CreateSchema(args)
+    {
+        DB.query(`CREATE SCHEMA ${args}`,function(err,result){
+            if(err) console.log(err);
+            
+        })
+
+        return this
+    }
     Select(args = [])
     {
         this.field = `SELECT ${args} `
@@ -247,24 +257,37 @@ class Database {
        return db
     }
     
-    CreateTable(args)
+    CreateTable(schema,args)
     {
-        let create = `CREATE TABLE ${args}`
+        let create = ''
+        if (schema != undefined || schema != null) {
+             create = `CREATE TABLE ${schema}.${args}`
+        }else{
+             create = `CREATE TABLE ${args}`
+        }
         this.isCreateTable = true
         this.tableName = args
         this.table = create
         return this
     }
 
-    DropTable(args)
+    DropTable(schema,args)
     {
-        
-        this.dropTable = `DROP TABLE ${args}`
+        if(schema != undefined || schema != null )
+        {
+            this.dropTable = `DROP TABLE ${schema}.${args}`
+            
+        }else{
+            this.dropTable = `DROP TABLE ${args}`
+        }
         this.tableName = args
         this.isDropTable = true
         
+        
         return this
     }
+
+    
 
     Fields(args)
     {
@@ -400,6 +423,13 @@ class Database {
      
         return this
     }
+
+    VarcharPrimaryKey(value)
+    {
+        this.field += ` VARCHAR(${value}) PRIMARY KEY  `
+     
+        return this
+    }
     Unique()
     {
         this.field += ` UNIQUE `
@@ -426,6 +456,15 @@ class Database {
         this.field = `\n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`
         this.fieldArray.push(this.field)
 
+        return this
+    }
+
+
+    Log()
+    {
+        this.field = `\n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(), update_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                        user_insert VARCHAR(40), user_update VARCHAR(40) `
+        this.fieldArray.push(this.field)
         return this
     }
 
