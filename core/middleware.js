@@ -8,9 +8,10 @@ const cert = fs.readFileSync(`${__dirname}/../.privatekey`).toString()
 
 class Middleware extends Cryptr {
 
-    constructor()
+    constructor(table_verify)
     {
         super(cert)
+        this.table_verify = table_verify
     }
 
     tokenSocketVerify(data,callback,role)
@@ -20,7 +21,7 @@ class Middleware extends Cryptr {
             return
         }
         let token = data.token
-        database.Select(['token','user_id','nomor_induk','email','no_telp','roles'])
+        database.Select(this.table_verify)
                 .From('users')
                 .Where({column:'token',value:`'${token}'`})
                 .Get(function(err,result){
@@ -76,7 +77,7 @@ class Middleware extends Cryptr {
             role = [`${role}`]
         }
         
-        database.Select(['nama_lengkap','token','users.user_id','nomor_induk','users.email','no_telp','roles'])
+        database.Select(this.table_verify)
                 .From('users')
                 .LeftJoin('biodata').On({table:'users',column:'user_id',value:'biodata.user_id'})
                 .Where({column:'token',value:`'${_token}'`})
