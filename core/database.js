@@ -443,10 +443,23 @@ class Database {
          return this
     }
 
+    ReferencesColumn(table,column)
+    {
+        this.field += ` \n \t \t REFERENCES ${table}(${column}) ` 
+         return this
+    }
+
     OnDeleteCascade()
     {
         
         this.field += `\n \t \t ON DELETE CASCADE`
+        this.fieldArray.push(this.field)
+        return this
+    }
+
+    OnUpdateCascade()
+    {
+        this.field += `\n \t \t ON UPDATE CASCADE`
         this.fieldArray.push(this.field)
         return this
     }
@@ -512,28 +525,30 @@ class Database {
         }
         // return db
         // console.log(db);
-
-        DB.query(db,(err,result) => {
-            if(err)
-            {
-                (this.isSetDataType) ? "" : console.log("\x1b[31m",`the data type of ${this.tableName} is not define`);
+        setTimeout(() => {
+            DB.query(db,(err,result) => {
+                if(err)
+                {
+                    (this.isSetDataType) ? "" : console.log("\x1b[31m",`the data type of ${this.tableName} is not define`);
+                    
+                    console.log("ERROR" + err);
+                    return   
+                } 
                 
-                console.log("ERROR" + err);
-                return   
-            } 
-            
-            if(this.isCreateTable)
-            {
-                console.log(`success create table ${this.tableName}`);
-
-            }else{
-                console.log(`success drop table ${this.tableName}`);
+                if(this.isCreateTable)
+                {
+                    console.log(`success create table ${this.tableName}`);
+    
+                }else{
+                    console.log(`success drop table ${this.tableName}`);
+                    
+                }
+    
+                // console.log(result);
                 
-            }
-
-            // console.log(result);
-            
-        })
+            })
+        },1000)
+        
     }
 
 }
