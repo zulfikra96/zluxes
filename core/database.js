@@ -217,6 +217,13 @@ class Database {
         return this
     }
 
+    SetColumnAll(args)
+    {
+        this.field += ` ${args} `
+
+        return this
+    }
+
 
 
     Into(args)
