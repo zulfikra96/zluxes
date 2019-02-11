@@ -60,6 +60,27 @@ class Database {
         return this
     }
 
+    Columns(obj)
+    {
+        let column = []
+        let value = []
+
+        for (const key in obj) {
+            column.push(key)
+            if(isNaN(obj[key]))
+            {
+                value.push(`'${obj[key]}'`)
+            }else{
+                value.push(obj[key])
+
+            }
+        }
+
+        this.field += `(${column}) VALUES(${value})`
+        return this
+
+    }
+
     SqlWhere(args)
     {
         this.field += ` WHERE ${args} `
