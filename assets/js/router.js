@@ -8,8 +8,12 @@ var router = new Router({
     }
 });
 
+// login
+router.add('/login/{id}', function () {
+    login.main()
+        .controller()
+});
 // router js
-
 router.add('', function () {
     home.dosen()
 });
