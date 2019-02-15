@@ -4,23 +4,27 @@ var fs   = require('fs')
 function database(name)
 {
     return `
-    const { database } = require('../core/database.js')
-    const  argv = require('yargs').argv
-    switch(argv.migration)
-    {
-        case "create":
-            database.CreateTable('${name}')
-                    .Fields('${name}_id')
-                        .PrimaryKey()
-                        .NotNull()
-                    .Timestamp()
-                    .Execute()
-            break;
-        case "drop":
-            database.DropTable('${name}')
-                    .Execute()
-            break;
-    }
+const { database } = require('../core/database.js')
+const  argv = require('yargs').argv
+switch(argv.migration)
+{
+    case "create":
+        database.CreateTable('${name}')
+                .Fields('${name}_id')
+                    .PrimaryKey()
+                    .NotNull()
+                .Log()
+                .Execute()
+        break;
+    case "drop":
+        database.DropTable('${name}')
+                .Execute()
+        break;
+        case "force-drop":
+    database.DropTableCascade('users_manajemen','${name}')
+        .Execute()
+        break;
+}
     `
 }
 
