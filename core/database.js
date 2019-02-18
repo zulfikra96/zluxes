@@ -53,19 +53,13 @@ class Database {
         return this
     }
 
-    Where(args = {column:'',value:''})
-    {
-        this.field += ` WHERE ${args.column} = ${args.value}`
-
-        return this
-    }
-
     Columns(obj)
     {
         let column = []
         let value = []
 
         for (const key in obj) {
+            if(obj[key] == '') continue
             column.push(key)
             if(isNaN(obj[key]))
             {
@@ -79,6 +73,13 @@ class Database {
         this.field += `(${column}) VALUES(${value})`
         return this
 
+    }
+
+    Where(args = {column:'',value:''})
+    {
+        this.field += ` WHERE ${args.column} = ${args.value}`
+
+        return this
     }
 
     SqlWhere(args)
@@ -210,16 +211,16 @@ class Database {
         return this
     }
 
-    AndSetColumn(args = {column:'',value:0})
+    SetColumnAll(args)
     {
-        this.field += `, ${args.column} = ${args.value} `
+        this.field += ` ${args} `
 
         return this
     }
 
-    SetColumnAll(args)
+    AndSetColumn(args = {column:'',value:0})
     {
-        this.field += ` ${args} `
+        this.field += `, ${args.column} = ${args.value} `
 
         return this
     }
@@ -269,7 +270,7 @@ class Database {
 
     SetAsync()
     {
-        // console.log(this.field)
+        console.log(this.field)
         let _this = this
        let db = new Promise(function(res,rej){
             DB.query(_this.field,function(err,result){
@@ -288,7 +289,7 @@ class Database {
     CreateTable(schema,args)
     {
         let create = ''
-        if (schema != undefined || schema != null) {
+        if (args != undefined || args != null) {
              create = `CREATE TABLE ${schema}.${args}`
         }else{
              create = `CREATE TABLE ${args}`
@@ -315,7 +316,22 @@ class Database {
         return this
     }
 
-    
+    DropTableCascade(schema,args)
+    {
+        if(schema != undefined || schema != null )
+        {
+            this.dropTable = `DROP TABLE ${schema}.${args} CASCADE`
+            
+        }else{
+            this.dropTable = `DROP TABLE ${args} CASCADE`
+        }
+        this.tableName = args
+        this.isDropTable = true
+        
+        
+        return this
+    }
+
 
     Fields(args)
     {
@@ -397,6 +413,22 @@ class Database {
         return this
     }
 
+    DoublePrecision()
+    {
+        let type = ` DOUBLE PRECISION `
+        this.field += type
+        this.isSetDataType = true
+        return this
+    }
+
+    Double()
+    {
+        let type = ` DOUBLE `
+        this.field += type
+        this.isSetDataType = true
+        return this
+    }
+
     Time()
     {
         let type = ` TIME `
@@ -417,6 +449,13 @@ class Database {
     {
         let type = ` BIGINT `
         this.field += type
+        this.isSetDataType = true
+        return this
+    }
+
+    Default(args)
+    {
+        this.field += ` DEFAULT ${args}`
         this.isSetDataType = true
         return this
     }
