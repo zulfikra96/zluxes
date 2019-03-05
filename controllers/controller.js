@@ -81,9 +81,7 @@ class Controller {
                 name += string[i]
             }
         }   
-
         name
-
         return name
         
     }
