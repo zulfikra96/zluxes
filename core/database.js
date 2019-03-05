@@ -6,10 +6,8 @@ connection = JSON.parse(connection.toString())
 
 // Database connection
 let DB = new Pool(connection.database)
-
 // Database Class
 class Database {
-
     constructor()
     {
         this.table = ''
@@ -29,14 +27,12 @@ class Database {
     * pada table
     * 
     */
-
     CreateSchema(args)
     {
         DB.query(`CREATE SCHEMA ${args}`,function(err,result){
             if(err) console.log(err);
             
         })
-
         return this
     }
     Select(args = [])
@@ -44,93 +40,84 @@ class Database {
         this.field = `SELECT ${args} `
         return this
     }
-    
     From(args)
     {
         this.field += `FROM ${args}`
-        // console.log(this.field);
-        
         return this
     }
-
     Columns(obj)
     {
         let column = []
         let value = []
-
         for (const key in obj) {
             if(obj[key] == '') continue
             column.push(key)
-            if(isNaN(obj[key]))
+            if(typeof obj[key] == 'string')
             {
                 value.push(`'${obj[key]}'`)
             }else{
                 value.push(obj[key])
-
             }
         }
-
         this.field += `(${column}) VALUES(${value})`
         return this
-
     }
-
+    SetColumns(obj)
+    {
+        let column = []
+        for (const key in obj) {
+            if(obj[key] == '') continue
+      
+            if(isNaN(obj[key]))
+            {
+                column.push(`${key} = '${obj[key]}'`)
+            }else{
+                column.push(`${key} = ${obj[key]}`)
+            }
+        }
+        this.field +=' '+ column
+        return this
+    }
     Where(args = {column:'',value:''})
     {
         this.field += ` WHERE ${args.column} = ${args.value}`
-
         return this
     }
-
     SqlWhere(args)
     {
         this.field += ` WHERE ${args} `
-
         return this
     }
-
     AndWhere(args = {column:'',value:''})
     {
         this.field += ` AND  ${args.column} = ${args.value}`
         return this
     }
-
     LeftJoin(table)
     {
         this.field += ` LEFT JOIN ${table} `
-
         return this
     }
-
     RightJoin(table)
     {
         this.field += ` RIGHT JOIN ${table} `
-
         return this
     }
-
     On(args = { table:'', column:'',value:'' })
     {
         this.field += ` ON ${args.table}.${args.column} =  ${args.value}`
-
         return this
     }
-
-
-
     InnerJoin(table)
     {
         this.field += ` INNER JOIN ${table} `
-
         return this
     }
-
     GroupBy(args)
     {
         this.field += ` GROUP BY ${args} `
         return this
     }
-
     OrderBy(args)
     {
         this.field += ` ORDER BY ${args} `
@@ -141,36 +128,27 @@ class Database {
         this.field += ` , ${args} `
         return this
     }
-
     Desc()
     {
         this.field += ` DESC `
         return this
     }
-
     Asc()
     {
         this.field += ` ASC `
         return this
     }
-
     Get(callback)
     {
         // console.log(this.field);
-        
-        DB.query(this.field,function(err,result){
-            
+        DB.query(this.field,function(err,result){  
              callback(err,result)
         })
-
         return this
     }
-
     GetAsync()
     {
-        let _this = this
-        // console.log(this.field);
-        
+        let _this = this  
         var promises = new Promise(function(res,rej){
             DB.query(_this.field,function(err,result){
                 if(err){
@@ -180,94 +158,67 @@ class Database {
                 res(result)
            })
         })
-
         return promises
     }
-
     DeleteFrom(table)
     {
         this.field = ` DELETE FROM ${table}`
         return this
     }
-
     Insert()
     {
         this.field = `INSERT `
-
         return this
     }
-
     Update(table)
     {
         this.field = `UPDATE ${table} SET`
-
         return this
     }
-
     SetColumn(args = {column:'',value:0})
     {
         this.field += ` ${args.column} = ${args.value} `
-
         return this
     }
-
     SetColumnAll(args)
     {
         this.field += ` ${args} `
-
         return this
     }
-
     AndSetColumn(args = {column:'',value:0})
     {
         this.field += `, ${args.column} = ${args.value} `
-
         return this
     }
-
-
-
     Into(args)
     {
         this.field += ` INTO ${args} `
         return this
     }
-
     Column(args)
     {
         this.field += `(${args})`
         return this
     }
-
     Value(...args)
     {
         this.field += ` VALUES(${args})`
         return this
     }
-
     Returning()
     {
         this.field += ` RETURNING * `
         return this
     }
-
-
-
-
     Set(callback)
     {
         console.log(this.field);
-        // return
-        
-
         DB.query(this.field,function(err,result){
             
             if(callback) callback(err,result)
         })
-
         return this
     }
-
     SetAsync()
     {
         console.log(this.field)
@@ -282,10 +233,8 @@ class Database {
                 res(result)
             })
        }) 
-
        return db
     }
-    
     CreateTable(schema,args)
     {
         let create = ''
@@ -299,7 +248,6 @@ class Database {
         this.table = create
         return this
     }
-
     DropTable(schema,args)
     {
         if(schema != undefined || schema != null )
@@ -311,11 +259,8 @@ class Database {
         }
         this.tableName = args
         this.isDropTable = true
-        
-        
         return this
     }
-
     DropTableCascade(schema,args)
     {
         if(schema != undefined || schema != null )
@@ -327,22 +272,15 @@ class Database {
         }
         this.tableName = args
         this.isDropTable = true
-        
-        
         return this
     }
-
-
     Fields(args)
     {
          this.field = `\n \t${args}`
-
          return this
     }
-
     /* tipe data untuk varchar
     data type for varchar */
-
     String(args)
     {
         let type = ` VARCHAR(${args}) `
@@ -350,7 +288,6 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     Text(args)
     {
         let type = ` Text `
@@ -358,7 +295,6 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     DateTime()
     {
         let type = ` TIMESTAMP   `
@@ -366,7 +302,6 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     Date()
     {
         let type = ` DATE   `
@@ -374,7 +309,6 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     SmallInt()
     {
         let type = ` SMALLINT   `
@@ -382,7 +316,6 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     Float()
     {
         let type = ` FLOAT   `
@@ -390,10 +323,8 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     /* tipe data untuk char
     data type for char */
-
     Char()
     {
         let type = ` CHAR(${args}) `
@@ -401,10 +332,8 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     /* tipe data untuk int
     data type for int */
-
     Integer(args)
     {
         let type = ` INT `
@@ -412,7 +341,6 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     DoublePrecision()
     {
         let type = ` DOUBLE PRECISION `
@@ -420,7 +348,6 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     Double()
     {
         let type = ` DOUBLE `
@@ -428,7 +355,6 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     Time()
     {
         let type = ` TIME `
@@ -436,7 +362,6 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     Boolean()
     {
         let type = ` BOOLEAN `
@@ -444,7 +369,6 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     BigInteger()
     {
         let type = ` BIGINT `
@@ -452,14 +376,12 @@ class Database {
         this.isSetDataType = true
         return this
     }
-
     Default(args)
     {
         this.field += ` DEFAULT ${args}`
         this.isSetDataType = true
         return this
     }
-
     NotNull()
     {
         
@@ -467,14 +389,12 @@ class Database {
         this.fieldArray.push(this.field)
         return this
     }
-
     Null()
     {
         this.field += ` `
         this.fieldArray.push(this.field)
         return this
     }
-
     ForeignKeys(key)
     {
         let fg = ` \n \tFOREIGN KEY (${key})`
@@ -483,39 +403,31 @@ class Database {
         this.key = key
         return this
     }
-
     PrimaryKey()
     {
         this.field += ` SERIAL PRIMARY KEY  `
-     
         return this
     }
-
     VarcharPrimaryKey(value)
     {
         this.field += ` VARCHAR(${value}) PRIMARY KEY  `
-     
         return this
     }
     Unique()
     {
         this.field += ` UNIQUE `
-     
         return this
     }
-
     References(table)
     {
          this.field += ` \n \t \t REFERENCES ${table}(${this.key}) ` 
          return this
     }
-
     ReferencesColumn(table,column)
     {
         this.field += ` \n \t \t REFERENCES ${table}(${column}) ` 
          return this
     }
-
     OnDeleteCascade()
     {
         
@@ -523,23 +435,18 @@ class Database {
         this.fieldArray.push(this.field)
         return this
     }
-
     OnUpdateCascade()
     {
         this.field += `\n \t \t ON UPDATE CASCADE`
         this.fieldArray.push(this.field)
         return this
     }
-
     Timestamp()
     {
         this.field = `\n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`
         this.fieldArray.push(this.field)
-
         return this
     }
-
-
     Log()
     {
         this.field = `\n\tcreated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(), update_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -547,7 +454,6 @@ class Database {
         this.fieldArray.push(this.field)
         return this
     }
-
     Sql(sql,callback)
     {
         DB.query(sql,function(err,result){
@@ -555,12 +461,10 @@ class Database {
             if(callback) callback(err,result)
         })
     }
-
     SqlAsync(sql,callback)
     {
         let promise = new Promise((resolve,reject) => {
-            DB.query(sql,function(err,result){
-               
+            DB.query(sql,function(err,result){   
                 if(err){
                     return reject(err)
                 }
@@ -569,17 +473,14 @@ class Database {
         })
         return promise
     }
-
     Limit(args)
     {
         this.field += ` LIMIT ${args} `
      
         return this
     }
-
     Execute()
     {
-        
         let db = ``
         if(this.table != '')
         {
@@ -600,8 +501,7 @@ class Database {
                     
                     console.log("ERROR" + err);
                     return   
-                } 
-                
+                }    
                 if(this.isCreateTable)
                 {
                     console.log(`success create table ${this.tableName}`);
@@ -610,16 +510,10 @@ class Database {
                     console.log(`success drop table ${this.tableName}`);
                     
                 }
-    
-                // console.log(result);
-                
+                // console.log(result); 
             })
         },1000)
-        
     }
-
 }
-
 let database = new Database()
-
 module.exports = { database,Database }

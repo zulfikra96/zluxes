@@ -50,20 +50,16 @@ class Controller {
                 {
                     if(obj[key].length > validations[key].max_length ) errornum += 1, errormsg[key].push(`Max ${validations[key].max_length} Character`)
                 }
-
-                // console.log(typeof validations[key].type)
                 if(typeof validations[key].type != 'number' || typeof validations[key].type != 'string')
                 {
                     if(typeof obj[key] != validations[key].type ) errornum += 1, errormsg[key].push(`Tipe input harus ${validations[key].type}`)
                 }
             }
         }
-
         return new Promise(function(resolve,reject){
             if(errornum){
                 return reject(errormsg)
             }
-
             resolve("success")
         })
     }
@@ -71,7 +67,6 @@ class Controller {
     {
         string = string.split(' ')
         let name = ''
-
         for (let i = 0; i < string.length; i++) {
             string[i] = string[i].replace(/<(?:.|\s)*?>/g, "")
             if(i != string.length - 1)
@@ -83,7 +78,6 @@ class Controller {
         }   
         name
         return name
-        
     }
     removeCharAndConcateStringForSql(string,char)
     {
