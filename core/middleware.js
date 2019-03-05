@@ -177,8 +177,6 @@ class Middleware extends Cryptr {
             changeToObj[changChar[o].split(':')[0]] = changChar[o].split(':')[1]  
         }
         for (const key in changeToObj) {
-            console.log();
-
             if(typeof changeToObj[key] == 'string')
             {
                 changeToObj[key] = changeToObj[key].replace(/%/g,' ')
