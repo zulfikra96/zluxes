@@ -8,7 +8,6 @@ class Middleware extends Cryptr {
     {
         super(cert)
         this.table_verify = table_verify
-        this.config = config
     }
     tokenSocketVerify(data,callback,role)
     {
@@ -48,7 +47,7 @@ class Middleware extends Cryptr {
     }
     tokenVerify(req,res,callback,role,menu)
     {
-        // console.log("program start time : %s", moment().format("hh:mm:ss SSS"))        
+        // console.log("program start time : %s", moment().format("hh:mm:ss SSS"))    
         let _token = req.headers._token
         if(!_token)
         {

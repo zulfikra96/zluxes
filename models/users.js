@@ -4,35 +4,24 @@ const rand = require('randomstring')
 
 class UsersModel extends Database {
 
-    async getUserByNomorInduk(nomor_induk)
+    async getUser(args = { select:[],where:{column:'',value:''} })
     {
-        let data = await this.Select(['nomor_induk','roles','user_id'])
-            .From('users')
-            .Where({column:'nomor_induk',value:`'${nomor_induk}'`})
+        args = await this.Select(args.select)
+            .From('users_manajemen.users')
+            .InnerJoin('hrd.karyawan').On({table:'users_manajemen.users',column:'user_id',value:'hrd.karyawan.karyawan_id'})
+            .InnerJoin('users_manajemen.role').On({table:'users_manajemen.users',column:'role_id',value:'users.role_id'})
+            .Where(args.where)
             .GetAsync().catch((err) => {
                 console.log(err);
             })
-            
-            return data
+        return args
     }
 
-    async getUserByNomorIndukAll(nomor_induk)
+    async updateUser(args = { set:'',where:'' })
     {
-        let data = await this.Select(['*'])
-            .From('users')
-            .Where({column:'nomor_induk',value:`'${nomor_induk}'`})
-            .GetAsync().catch((err) => {
-                console.log(err);
-            })
-            
-            return data
-    }
-
-    async updatePassword(new_password, nomor_induk)
-    {
-        let data = await this.Update('users')
-            .SetColumn({column:'password',value:`'${new_password}'`})
-            .Where({column:'nomor_induk',value:`'${nomor_induk}'`})
+        let data = await this.Update('users_manajemen.users')
+            .SetColumnAll(args.set)
+            .Where(args.where)
             .SetAsync().catch((err) => {
                 console.log(err);
                 
@@ -40,139 +29,76 @@ class UsersModel extends Database {
         return data
     }
 
-    async getFullProfile(user_id)
+    async addKaryawan(data)
     {
-        let data = await this.SqlAsync(`SELECT nomor_induk, nama_lengkap, roles FROM users
-            LEFT JOIN biodata ON users.user_id = biodata.user_id WHERE users.user_id = ${user_id}
-        `).catch((err) => {
-            console.log(err);
-            
-        })
+        let date    = new Date()
+        let insert_karyawan
+        let year    = date.getFullYear()
+        let month   = date.getMonth() + 1
+            month   = (month >= 10) ?  month : '0' + month;
+            date    = year.toString()+month.toString()
+        // console.log(date);
         
-        return data
-    }
-
-
-    async addVerifikasiDosen(nomor_induk,type)
-    {
-        let data = await this.Insert().Into(`${type}`)
-            .Column(['nomor_induk','created_at'])
-            .Value([nomor_induk,'NOW()'])
-            .SetAsync().catch((err) => {
-                console.log(err);
-                
-            })   
-        return data        
-    }
-
-    async checkVerifikasiDosen(nomor_induk,type)
-    {
-        let data = await this.Select(['nomor_induk'])
-            .From(`${type}`)
-            .Where({column:'nomor_induk',value:nomor_induk})
-            .GetAsync().catch((err) => {
-                console.log(err);
-                
-            })
-
-        if(data.rowCount == 1)
-        {
-            return true
-        }
-
-        return false
-    }
-
-    async getDataVerifikasi(type)
-    {
-        let data = await this.Select(['*'])
-            .From(type)
-            .OrderBy('nomor_induk')
-            .Asc()
-            .Limit(10)
-            .GetAsync((err) => {
-                console.log(err);
-                
-            })
-        return data
-    }
-
-    async getDataUsers(role)
-    {
-        let data = await this.Select(['*'])
-            .From('users')
-            .LeftJoin('biodata').On({table:'users',column:'user_id',value:'biodata.user_id'})
-            .Where({column:'roles',value:`'${role}'`})
-            .Limit(20)
-            .GetAsync().catch((err) => {
-                console.log(err);
-                
-            })
-        return data
-    }
-
-    async deletePekerjaan(data)
-    {
-        data = await this.DeleteFrom('pekerjaan')
-            .Where({column:'user_id',value:data.user_id})
-            .AndWhere({column:'pekerjaan_id',value:data.pekerjaan_id})
-            .SetAsync().catch((err) => {
-                console.log(err);
-                
-            })
-        return data
-    }
-
-
-    async getCountUsers(data)
-    {
-        data = await this.SqlAsync(`
-            SELECT COUNT(*) AS total
-                FROM users
-            WHERE roles = '${data.role}'
-
-        `).catch((err) => {
-            console.log(err);
-            
-        })
-
-        return data
-    }
-
-    async getCountKelas()
-    {
-        let data = await this.SqlAsync(`
-            SELECT COUNT(*) AS total FROM kelas
-        `).catch((err) => {
-            console.log(err);
-            
-        })
-
-        return data
-    }
-
-    async deleteUsersByUsername(username)
-    {
-        let data = await this.DeleteFrom('users')
-            .Where({column:'nomor_induk',value:`'${username}'`})
-            .SetAsync().catch((err) => {
-                console.log(err);
-                
-            }) 
-        return data
-    }
-
-    async getCountByMonth()
-    {
-        let data = await this.SqlAsync(`
-            SELECT date_trunc('month',created_at) AS month, COUNT(*) AS pendaftar 
-            FROM users
-            WHERE created_at > now() - interval 1 years
+        let get_count = await this.SqlAsync(`
+            SELECT COUNT(*) AS total_user, LEFT(user_id,6) as user_id FROM users_manajemen.users WHERE LEFT(user_id,6) = '${date}' GROUP BY user_id
         `)
+        let total_user = get_count.rowCount + 1
+        if(total_user < 10)
+        {
+            total_user = '00' + total_user
+        }else if(total_user < 100)
+        {
+            total_user = '0' + total_user
+        }
+        // console.log(total_user);
+        let user_id = date+total_user
+        console.log(user_id);
+        let insert_user = await this.Insert().Into('users_manajemen.users')
+            .Columns({
+                user_id:user_id,
+                role_id:data["role_id"],
+                password:data.password,
+                user_insert:data["user_insert"],
+                user_update:data["user_insert"],
+            })
+            .Returning()
+            .SetAsync()
+            
+            insert_karyawan = await this.Insert().Into('hrd.karyawan')
+            .Columns({
+                karyawan_id:user_id,
+                nama:data.nama,
+                email:data.email,
+                alamat:data.alamat,
+                desa_id:(data.desa_id == null || data.desa_id == '') ? '' : data.desa_id,
+                user_insert:data["user_insert"],
+                user_update:data["user_insert"],
+            }).SetAsync()
+        
+
+        return insert_karyawan
+                
     }
-    
+
+    async getKaryawan(data)
+    {
+        let sql = `
+            SELECT ${data.select} FROM users_manajemen.users 
+            INNER JOIN hrd.karyawan ON users.user_id = karyawan.karyawan_id
+            ${(data.where != null) ? `WHERE ${data.where}` : ''} 
+            LIMIT ${data.limit}
+            OFFSET ${data.offset}`
+        data = await this.SqlAsync(sql).catch((err) => {
+            console.log(err);
+        }) 
+        for (let i = 0; i < data.rows.length; i++) {
+            delete data.rows[i].password   
+            delete data.rows[i].token   
+        }
+        return data
+    }  
 }
 
-module.exports = { UsersModel }
+module.exports.UserModel = new UsersModel()
 
 

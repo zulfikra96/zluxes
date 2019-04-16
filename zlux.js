@@ -1,5 +1,6 @@
 var argv = require('yargs').argv
 var fs   = require('fs')
+
 function database(name,schema)
 {
     if(schema == null) schema = 'public'
@@ -29,6 +30,8 @@ switch(argv.migration)
 }
     `
 }
+
+
 switch(argv.make){
     case "table" :
         fs.writeFile(`${__dirname}/database/${argv.name}.js`,database(argv.name,(argv.schema != undefined)?argv.schema : null),(err) => {

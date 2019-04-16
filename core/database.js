@@ -59,7 +59,7 @@ class Database {
                 value.push(obj[key])
             }
         }
-        this.field += `(${column}) VALUES(${value})`
+        this.field += "("+column+") VALUES("+value+")"
         return this
     }
     SetColumns(obj)
@@ -91,6 +91,11 @@ class Database {
     AndWhere(args = {column:'',value:''})
     {
         this.field += ` AND  ${args.column} = ${args.value}`
+        return this
+    }
+    AndIsNotNull()
+    {
+        this.field += ` AND  user_id IS NOT NULL`
         return this
     }
     LeftJoin(table)
@@ -149,6 +154,7 @@ class Database {
     GetAsync()
     {
         let _this = this  
+        // console.log(this.field)
         var promises = new Promise(function(res,rej){
             DB.query(_this.field,function(err,result){
                 if(err){
@@ -253,7 +259,6 @@ class Database {
         if(schema != undefined || schema != null )
         {
             this.dropTable = `DROP TABLE ${schema}.${args}`
-            
         }else{
             this.dropTable = `DROP TABLE ${args}`
         }
@@ -266,7 +271,6 @@ class Database {
         if(schema != undefined || schema != null )
         {
             this.dropTable = `DROP TABLE ${schema}.${args} CASCADE`
-            
         }else{
             this.dropTable = `DROP TABLE ${args} CASCADE`
         }
@@ -384,7 +388,6 @@ class Database {
     }
     NotNull()
     {
-        
         this.field += ` NOT NULL`
         this.fieldArray.push(this.field)
         return this
@@ -408,7 +411,7 @@ class Database {
         this.field += ` SERIAL PRIMARY KEY  `
         return this
     }
-    VarcharPrimaryKey(value)
+    StringPrimaryKey(value)
     {
         this.field += ` VARCHAR(${value}) PRIMARY KEY  `
         return this
@@ -476,7 +479,6 @@ class Database {
     Limit(args)
     {
         this.field += ` LIMIT ${args} `
-     
         return this
     }
     Execute()
@@ -486,7 +488,6 @@ class Database {
         {
             db = this.table + `(${this.fieldArray});`
             // console.log(`success create table ${this.tableName}`);
-            
         }else if(this.dropTable != ''){
             db = this.dropTable
 
