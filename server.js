@@ -38,7 +38,8 @@ socket(io)
 app.use('/api/mobile',require('./routes/mobile'))
 app.use('/api',require('./routes/api'))
 app.use('/',require('./routes/web'))
-server.listen(3000,()=>{
-    console.log("server run");
+
+server.listen(4000,()=>{
+    console.log("server run in 4000");
 })
 
