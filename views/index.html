@@ -4,89 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- CDN Spectre css -->
-    <!-- Include Editor style. -->
-    <!-- <link rel="stylesheet" href="/assets/css/bootstrap.min.css"> -->
-
-    <link href='https://cdn.jsdelivr.net/npm/froala-editor@2.9.1/css/froala_editor.min.css' rel='stylesheet' type='text/css' />
-    <link href='https://cdn.jsdelivr.net/npm/froala-editor@2.9.1/css/froala_style.min.css' rel='stylesheet' type='text/css' />
-    
-    <!-- Include JS file. -->
-    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
-    <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/libs/timepicker/dist/timepicker.css">
-    <script
-        src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-    <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@2.9.1/js/froala_editor.min.js'></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/11.2.0/classic/ckeditor.js"></script>
-    <script src="/assets/libs/socket.io.js"></script>
-    <script src="/libs/timepicker/dist/timepicker.js"></script>
-    <script src="/assets/js/zlux.js"></script>
-    <script src="/assets/js/import.js"></script>
-    <script src="/assets/libs/simplewebrtc.js"></script>
-
-    <script>
-        
-        function offlineKelas(kode_kelas)
-        {
-            if(localStorage.getItem('session') == null) return
-            let users = JSON.parse(localStorage.getItem('session'))
-            socket.emit('offline-kelas',users.nomor_induk,kode_kelas)
-
-            localStorage.removeItem('kelas')
-        }
-
-
-        
-    </script>
-    <title id="Title"></title>
+    <title>Document</title>
 </head>
 <body>
-    <style>
-        .ck-content p{
-            margin: 0px;
-            padding:0px;
-        }
-
-        .column p{
-            margin: 0px;
-            padding:0px;
-        }
-    </style>
-    <div id="App">
-    </div>
-    <div id="modal"></div>
-    <footer >
-        <div class="foot-word" style="background-color: #4240d4; text-align:center; font-size:14px; color:#fff;">Tugas Akhir by Zulfikra L. Abdjul | 1461404866</div>
-    </footer>
-    <!-- js -->
-    <script src="/assets/libs/axios.min.js"></script>
-
-   
-    <!-- libs -->
-    <!-- <script src="/assets/libs/router.js"></script>
-    <script src="/assets/js/router.js"></script> -->
-    <script src="/assets/js/vue.min.js"></script>
-    <script src="/assets/js/bootstrap.min.js"></script>
-    <script src="/assets/libs/print.js"></script>
-    <script src="/assets/libs/Chart.min.js"></script>
-    <script src="/assets/libs/router.js"></script>
-    <script>
-        
-    </script>
-    <script>
-        window.onload = function()
-        {
-            requireModuleInnerBody('/assets/js/router.js')
-            requireModuleInnerBody('https://www.google.com/recaptcha/api.js')
-        }    
-    //    console.log(ClassicEditor);
-       
-    </script>
+    <h1>Zluxes Framework express</h1>
 </body>
 </html>
