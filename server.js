@@ -38,7 +38,7 @@ socket(io)
 app.use('/api/mobile',require('./routes/mobile'))
 app.use('/api',require('./routes/api'))
 app.use('/',require('./routes/web'))
-
+app.use('/assets',express.static(__dirname+'/views/assets'))
 server.listen(4000,()=>{
     console.log("server run in 4000");
 })
